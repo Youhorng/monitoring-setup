@@ -26,5 +26,23 @@ services:
       - grafana-storage:/var/lib/grafana
     restart: unless-stopped
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    restart: unless-stopped
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-exporter
+    ports:
+      - "9113:9113"
+    command:
+      - '--nginx.scrape-uri=http://nginx:80/stub_status'
+    restart: unless-stopped
+
 volumes:
   grafana-storage:
